@@ -8,6 +8,14 @@
 
 A real-time AI-powered driver safety monitoring system that detects drowsiness, distraction, and poor posture to prevent accidents. Built with computer vision and deep learning technologies.
 
+## 📊 Presentation Materials
+
+**3-minute presentation slides available!** Perfect for demos, talks, and project showcases:
+
+- **[SLIDES.md](SLIDES.md)**: Markdown presentation with all content organized in slide format
+- **[presentation.html](presentation.html)**: Interactive HTML presentation using Reveal.js (open in browser)
+- **[PRESENTATION_README.md](PRESENTATION_README.md)**: Complete usage guide and presentation tips
+
 ## ✨ Features
 
 ### 🎯 Core Detection Capabilities
@@ -280,6 +288,9 @@ hci/
 ├── metric_landmarks.py    # Facial landmark metrics
 ├── utils.py               # Utility functions
 ├── requirements.txt       # Python dependencies
+├── SLIDES.md              # Markdown presentation slides (3-min)
+├── presentation.html      # Interactive HTML presentation (Reveal.js)
+├── PRESENTATION_README.md # Presentation usage guide
 ├── assets/
 │   ├── alarm.mp3         # Alert sound file
 │   └── camera_params.json # Camera calibration parameters
