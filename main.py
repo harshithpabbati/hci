@@ -37,7 +37,7 @@ try:
 except pygame.error as e:
     print(f"Warning: Audio system initialization failed: {e}")
     print("The application will run without sound alerts.\n")
-    
+
 sound = None
 
 # Display constants
@@ -51,14 +51,63 @@ POSE_FONT_SCALE = 1.5
 POSE_FONT_THICKNESS = 1
 POSE_COLOR = (0, 255, 0)  # Green for pose info
 
+# Alarm overlay constants
+ALARM_BOX_HEIGHT = 150
+ALARM_BOX_MARGIN = 50
+ALARM_BOX_WIDTH_OFFSET = 100
+ALARM_TEXT_Y_OFFSET = 50  # Y position for "ALARM!" text
+ALARM_MESSAGE_Y_OFFSET = 110  # Y position for specific alert message
+
+
+def draw_alarm_overlay(frame: np.ndarray, message: str):
+    """
+    Draw a prominent alert overlay on the frame to indicate alarm is sounding.
+
+    Args:
+        frame: BGR image array to draw on
+        message: Alert message to display (e.g., "ASLEEP!", "CRASH DETECTED!")
+    """
+    h, w = frame.shape[:2]
+
+    # Create semi-transparent red overlay
+    overlay = frame.copy()
+    cv2.rectangle(overlay, (0, 0), (w, h), (0, 0, 255), -1)
+    cv2.addWeighted(overlay, 0.3, frame, 0.7, 0, frame)
+
+    # Draw alert box in center
+    box_width = w - ALARM_BOX_WIDTH_OFFSET
+    box_x = ALARM_BOX_MARGIN
+    box_y = (h - ALARM_BOX_HEIGHT) // 2
+
+    # Draw white box with thick red border
+    cv2.rectangle(frame, (box_x, box_y), (box_x + box_width, box_y + ALARM_BOX_HEIGHT),
+                  (255, 255, 255), -1)
+    cv2.rectangle(frame, (box_x, box_y), (box_x + box_width, box_y + ALARM_BOX_HEIGHT),
+                  (0, 0, 255), 8)
+
+    # Draw "ALARM!" text (using ASCII only for OpenCV compatibility)
+    alarm_text = "!!! ALARM !!!"
+    text_size = cv2.getTextSize(alarm_text, cv2.FONT_HERSHEY_DUPLEX, 1.5, 3)[0]
+    text_x = box_x + (box_width - text_size[0]) // 2
+    text_y = box_y + ALARM_TEXT_Y_OFFSET
+    cv2.putText(frame, alarm_text, (text_x, text_y),
+                cv2.FONT_HERSHEY_DUPLEX, 1.5, (0, 0, 255), 3, cv2.LINE_AA)
+
+    # Draw the specific alert message
+    msg_size = cv2.getTextSize(message, cv2.FONT_HERSHEY_DUPLEX, 1.2, 2)[0]
+    msg_x = box_x + (box_width - msg_size[0]) // 2
+    msg_y = box_y + ALARM_MESSAGE_Y_OFFSET
+    cv2.putText(frame, message, (msg_x, msg_y),
+                cv2.FONT_HERSHEY_DUPLEX, 1.2, (0, 0, 0), 2, cv2.LINE_AA)
+
 
 def load_sound(filepath: str) -> pygame.mixer.Sound:
     """
     Load an audio file for alert notifications.
-    
+
     Args:
         filepath: Path to the audio file (MP3, WAV, OGG supported)
-        
+
     Returns:
         pygame.mixer.Sound object or None if loading fails
     """
@@ -71,7 +120,7 @@ def load_sound(filepath: str) -> pygame.mixer.Sound:
 def main():
     """
     Main entry point for the driver drowsiness detection system.
-    
+
     Initializes camera, detection models, and runs the main detection loop.
     Displays real-time video feed with overlay information and triggers
     alerts when drowsiness or distraction is detected.
@@ -145,21 +194,21 @@ def main():
     crash_det = None
     yawn_det = None
     blink_monitor = None
-    
+
     if args.enable_crash_detection:
         crash_det = CrashDetector(
             motion_threshold=args.crash_motion_thresh,
             verbose=args.verbose
         )
         print("Crash detection enabled")
-    
+
     if args.enable_yawn_detection:
         yawn_det = YawnDetector(
             mar_thresh=args.yawn_thresh,
             verbose=args.verbose
         )
         print("Yawn detection enabled")
-    
+
     if args.enable_blink_rate:
         blink_monitor = BlinkRateMonitor(
             ear_blink_thresh=args.ear_thresh,
@@ -211,9 +260,12 @@ def main():
         lms = Detector.process(gray).multi_face_landmarks
 
         alert_messages = []
+        alarm_triggered = False
+        alarm_message = ""
+
         if lms:
             landmarks = get_landmarks(lms)
-            
+
             # Draw eye keypoints on frame
             Eye_det.show_eye_keypoints(
                 color_frame=frame, landmarks=landmarks, frame_size=frame_size
@@ -254,7 +306,7 @@ def main():
             yawn_count = 0
             if yawn_det is not None:
                 is_yawning, mar, yawn_count = yawn_det.detect_yawn(landmarks, t_now)
-            
+
             blink_rate = 0.0
             abnormal_blink = False
             if blink_monitor is not None:
@@ -267,14 +319,20 @@ def main():
                 alert_messages.append("ASLEEP!")
                 if sound:
                     sound.play(loops=0)
+                    alarm_triggered = True
+                    alarm_message = "ASLEEP!"
             if looking_away:
-                alert_messages.append("LOOKING AWAY!")
+                alert_messages.append("LOOK AWAY!")
                 if sound:
                     sound.play(loops=0)
+                    alarm_triggered = True
+                    alarm_message = "LOOK AWAY!"
             if distracted:
                 alert_messages.append("DISTRACTED!")
                 if sound:
                     sound.play(loops=0)
+                    alarm_triggered = True
+                    alarm_message = "DISTRACTED!"
             if is_yawning:
                 alert_messages.append("YAWNING!")
             if abnormal_blink:
@@ -309,7 +367,7 @@ def main():
                     cv2.LINE_AA,
                 )
                 metrics_y += 25
-            
+
             if blink_monitor is not None and blink_rate > 0:
                 cv2.putText(
                     frame,
@@ -369,6 +427,12 @@ def main():
                 alert_messages.append("CRASH DETECTED!")
                 if sound:
                     sound.play(loops=0)
+                    alarm_triggered = True
+                    alarm_message = "CRASH DETECTED!"
+
+        # Draw prominent alarm overlay if alarm was triggered
+        if alarm_triggered:
+            draw_alarm_overlay(frame, alarm_message)
 
         e2 = cv2.getTickCount()
         proc_time_frame_ms = ((e2 - e1) / cv2.getTickFrequency()) * 1000
