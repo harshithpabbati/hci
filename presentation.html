@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Driver Drowsiness Detection System - Presentation</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.5.0/reveal.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.5.0/theme/black.min.css">
+    <style>
+        .reveal h1, .reveal h2, .reveal h3 {
+            text-transform: none;
+        }
+        .reveal ul {
+            display: block;
+        }
+        .reveal .slides section {
+            text-align: left;
+        }
+        .reveal .center-content {
+            text-align: center;
+        }
+        .reveal table {
+            font-size: 0.7em;
+        }
+        .emoji {
+            font-style: normal;
+        }
+        .highlight {
+            color: #42affa;
+            font-weight: bold;
+        }
+        .code-block {
+            background: #1e1e1e;
+            padding: 20px;
+            border-radius: 8px;
+            font-family: monospace;
+        }
+    </style>
+</head>
+<body>
+    <div class="reveal">
+        <div class="slides">
+            
+            <!-- Slide 1: Title -->
+            <section class="center-content">
+                <h1>🚘 Driver Drowsiness Detection System</h1>
+                <h3>AI-Powered Driver Safety Monitoring</h3>
+                <p><strong>Harshith Pabbati</strong></p>
+                <p><small>Real-time Computer Vision Solution</small></p>
+            </section>
+
+            <!-- Slide 2: The Problem -->
+            <section>
+                <h2>🎯 The Problem</h2>
+                <p><strong>Road accidents due to driver drowsiness are a critical safety concern:</strong></p>
+                <ul>
+                    <li>💤 Drowsiness causes <span class="highlight">20% of all traffic accidents</span></li>
+                    <li>😴 Fatigue-related crashes result in <span class="highlight">1,550 deaths annually</span> (US)</li>
+                    <li>⏰ Most common during early morning and late night hours</li>
+                    <li>🚫 Often goes undetected until it's too late</li>
+                </ul>
+                <br>
+                <p class="highlight">➜ We need a real-time solution to detect and alert drowsy drivers!</p>
+            </section>
+
+            <!-- Slide 3: Our Solution -->
+            <section>
+                <h2>💡 Our Solution</h2>
+                <p><strong>A real-time AI-powered safety monitoring system</strong> using computer vision and deep learning</p>
+                <h3>Core Technologies:</h3>
+                <ul>
+                    <li>🎥 <strong>Computer Vision:</strong> OpenCV + MediaPipe Face Mesh</li>
+                    <li>🧠 <strong>Machine Learning:</strong> Real-time landmark detection (478 facial points)</li>
+                    <li>🖥️ <strong>Dual Interface:</strong> CLI + Streamlit Web App</li>
+                    <li>📊 <strong>Multi-metric Analysis:</strong> Comprehensive driver state monitoring</li>
+                </ul>
+                <br>
+                <p class="highlight">Key Innovation: Non-intrusive, camera-based monitoring - no wearables required!</p>
+            </section>
+
+            <!-- Slide 4: Key Features -->
+            <section>
+                <h2>✨ Key Features</h2>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                    <div>
+                        <h3>👁️ Eye & Gaze Monitoring</h3>
+                        <ul style="font-size: 0.8em;">
+                            <li><strong>EAR detection</strong> for drowsiness</li>
+                            <li><strong>PERCLOS Score</strong> - industry standard</li>
+                            <li><strong>Iris tracking</strong> for gaze</li>
+                            <li><strong>Blink rate</strong> monitoring</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3>🧑 Head & Body Tracking</h3>
+                        <ul style="font-size: 0.8em;">
+                            <li><strong>3D Head Pose</strong> estimation</li>
+                            <li><strong>Distraction</strong> detection</li>
+                            <li><strong>Posture</strong> analysis</li>
+                            <li><strong>Yawn detection</strong> (fatigue)</li>
+                        </ul>
+                    </div>
+                </div>
+                <h3>🚨 Advanced Safety</h3>
+                <ul style="font-size: 0.8em;">
+                    <li><strong>Multi-level alerts</strong> (drowsy, asleep, distracted, yawning)</li>
+                    <li><strong>Crash detection</strong> via optical flow analysis</li>
+                    <li><strong>Audio alarms</strong> + <strong>Screenshot capture</strong> for incidents</li>
+                </ul>
+            </section>
+
+            <!-- Slide 5: System Architecture -->
+            <section>
+                <h2>🏗️ System Architecture</h2>
+                <pre style="font-size: 0.7em; text-align: center;"><code>
+Input (Webcam/Camera/Video)
+          ↓
+MediaPipe Face Mesh (478 landmarks)
+          ↓
+    ┌─────┴─────┬─────────────┐
+    ↓           ↓             ↓
+Eye Detector  Head Pose   Posture
+(EAR/Gaze)   (3D Orient)  (Pose Model)
+    ↓           ↓             ↓
+    └─────┬─────┴─────────────┘
+          ↓
+  Attention Scorer + Alert System
+          ↓
+   Real-time UI Display
+                </code></pre>
+                <p class="highlight" style="text-align: center;">Real-time processing with &lt;30ms latency</p>
+            </section>
+
+            <!-- Slide 6: Detection Capabilities -->
+            <section>
+                <h2>📊 Detection Capabilities</h2>
+                <table style="width: 100%; font-size: 0.65em;">
+                    <thead>
+                        <tr>
+                            <th>Alert</th>
+                            <th>Trigger</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>🟡 <strong>DROWSY</strong></td>
+                            <td>PERCLOS threshold exceeded</td>
+                            <td>Warning sound</td>
+                        </tr>
+                        <tr>
+                            <td>🔴 <strong>ASLEEP</strong></td>
+                            <td>Eyes closed &gt;2 seconds</td>
+                            <td>Loud alarm + screenshot</td>
+                        </tr>
+                        <tr>
+                            <td>🟠 <strong>LOOK AWAY</strong></td>
+                            <td>Gaze off-road &gt;2 seconds</td>
+                            <td>Alert sound</td>
+                        </tr>
+                        <tr>
+                            <td>🟣 <strong>DISTRACTED</strong></td>
+                            <td>Head turned &gt;20° for &gt;2.5s</td>
+                            <td>Warning</td>
+                        </tr>
+                        <tr>
+                            <td>🥱 <strong>YAWNING</strong></td>
+                            <td>Mouth open &gt;1.5 seconds</td>
+                            <td>Fatigue warning</td>
+                        </tr>
+                        <tr>
+                            <td>👀 <strong>ABNORMAL BLINK</strong></td>
+                            <td>Unusual frequency</td>
+                            <td>Alert</td>
+                        </tr>
+                        <tr>
+                            <td>💥 <strong>CRASH</strong></td>
+                            <td>Sudden deceleration</td>
+                            <td>Emergency alert</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <p style="font-size: 0.8em; margin-top: 20px;"><strong>✓ Adjustable thresholds</strong> for different driving conditions</p>
+            </section>
+
+            <!-- Slide 7: Usage & Demo -->
+            <section>
+                <h2>🚀 Usage & Demo</h2>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                    <div>
+                        <h3>CLI Mode:</h3>
+                        <div class="code-block" style="font-size: 0.7em;">
+                            python main.py --camera 0
+                        </div>
+                    </div>
+                    <div>
+                        <h3>Web Interface:</h3>
+                        <div class="code-block" style="font-size: 0.7em;">
+                            streamlit run app.py
+                        </div>
+                    </div>
+                </div>
+                <h3>Live Dashboard Features:</h3>
+                <ul style="font-size: 0.8em;">
+                    <li>✅ Real-time video feed with overlay annotations</li>
+                    <li>📈 Live metrics (FPS, alert count, blink rate)</li>
+                    <li>🎨 Visual indicators for each alert type</li>
+                    <li>📸 Screenshot gallery of all incidents</li>
+                    <li>⚙️ Easy configuration via sidebar</li>
+                </ul>
+                <p style="font-size: 0.8em;"><strong>Requirements:</strong> Python 3.8+, Webcam, works on CPU or GPU</p>
+            </section>
+
+            <!-- Slide 8: Results & Impact -->
+            <section>
+                <h2>📈 Results & Impact</h2>
+                <h3>Performance Metrics:</h3>
+                <ul>
+                    <li>⚡ <strong>Real-time processing:</strong> 30+ FPS on standard hardware</li>
+                    <li>🎯 <strong>Accuracy:</strong> High precision with MediaPipe landmarks</li>
+                    <li>🔄 <strong>Reliability:</strong> Continuous monitoring without interruption</li>
+                    <li>💾 <strong>Lightweight:</strong> Runs efficiently on standard laptops</li>
+                </ul>
+                <h3>Real-world Applications:</h3>
+                <ul>
+                    <li>🚛 Commercial trucking fleets</li>
+                    <li>🚕 Ride-sharing services (Uber, Lyft)</li>
+                    <li>🚗 Personal vehicle safety systems</li>
+                    <li>🏢 Corporate driver safety programs</li>
+                </ul>
+                <p class="highlight">➜ Potential to save lives by preventing drowsy driving accidents!</p>
+            </section>
+
+            <!-- Slide 9: Future Work -->
+            <section>
+                <h2>🔮 Future Work</h2>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                    <div>
+                        <h3>Planned Enhancements:</h3>
+                        <ul style="font-size: 0.75em;">
+                            <li>📱 <strong>Mobile app</strong> integration</li>
+                            <li>☁️ <strong>Cloud analytics</strong> for fleets</li>
+                            <li>🤖 <strong>Deep learning</strong> models</li>
+                            <li>🔊 <strong>Voice alerts</strong></li>
+                            <li>📊 <strong>Behavior analytics</strong></li>
+                            <li>🌐 <strong>Multi-camera</strong> support</li>
+                            <li>🔗 <strong>Vehicle integration</strong></li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3>Research Directions:</h3>
+                        <ul style="font-size: 0.75em;">
+                            <li>Personalized threshold adaptation</li>
+                            <li>Integration with autonomous vehicles</li>
+                            <li>Predictive drowsiness detection</li>
+                            <li>Historical pattern analysis</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Slide 10: Thank You -->
+            <section class="center-content">
+                <h1>🙏 Thank You!</h1>
+                <h2>🚘 Driver Drowsiness Detection System</h2>
+                <p class="highlight" style="font-size: 1.5em;">Making roads safer with AI</p>
+                <br>
+                <h3>Questions?</h3>
+                <p>📧 <a href="https://github.com/harshithpabbati/hci">GitHub Repository</a></p>
+                <p>🔗 <strong>Tech Stack:</strong> Python | OpenCV | MediaPipe | Streamlit | PyGame</p>
+                <p>⭐ <strong>Open Source</strong> - MIT License</p>
+            </section>
+
+            <!-- Slide 11: Installation (Bonus) -->
+            <section>
+                <h2>📚 Get Started</h2>
+                <h3>Installation:</h3>
+                <div class="code-block" style="font-size: 0.7em;">
+git clone https://github.com/harshithpabbati/hci.git
+cd hci
+pip install -r requirements.txt
+python main.py
+                </div>
+                <br>
+                <h3>Key Technologies:</h3>
+                <ul style="font-size: 0.8em;">
+                    <li><strong>MediaPipe Face Mesh:</strong> Google's real-time face landmark detection</li>
+                    <li><strong>OpenCV:</strong> Computer vision library for image processing</li>
+                    <li><strong>Streamlit:</strong> Interactive web application framework</li>
+                </ul>
+                <br>
+                <p class="highlight" style="text-align: center;">Start building safer driving experiences today!</p>
+            </section>
+
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.5.0/reveal.min.js"></script>
+    <script>
+        Reveal.initialize({
+            hash: true,
+            transition: 'slide',
+            controls: true,
+            progress: true,
+            center: true,
+            slideNumber: true,
+            width: 1280,
+            height: 720,
+        });
+    </script>
+</body>
+</html>
